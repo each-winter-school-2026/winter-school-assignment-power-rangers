@@ -1,0 +1,28 @@
+{
+"ola": {
+"id": "ola",
+"title": "ola",
+"subtitle": "It's gonna do something someday xd",
+"icon": "icons/modules/centrifuge.svg",
+"settings": {
+
+    "MW cutoff deplete": {
+        "formtype": "ChoiceField",
+        "options": {"above": "depleteAbove",
+                    "below": "depleteBelow"
+                    
+                    }
+                },
+
+
+
+    
+    "MW cutoff no": {
+        "formtype": "DecimalField",
+        "default": 30.0,
+        "min": 0.0,
+        "max": 300.0,
+        "step": 0.1}
+    }
+}
+}

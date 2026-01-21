@@ -42,7 +42,21 @@ class Protein:
         'J': (AMINO_ACID_HYDROPHOBICITY['I'] + AMINO_ACID_HYDROPHOBICITY['L']) / 2,  # Isoleucine or Leucine
         'X': sum(AMINO_ACID_HYDROPHOBICITY.values()) / len(AMINO_ACID_HYDROPHOBICITY)  # Any amino acid
     })
-        
+
+    # Amino acids polarity weights
+    AMINO_ACID_POLARITY = {
+        "R": 0, "K": 0, "D": 0.9, "E": 0.9, "N": 1, "Q": 1, "S": 1, "T": 1,
+        "A": 0, "G": 0, "P": 0, "C": 0.55, "V": 0, "I": 0, "L": 0,
+        "F": 0, "Y": 0.65, "W": 0.65, "H": 0.7, "M": 0
+    }
+    # Ambiguous codes (average polarity)
+    AMINO_ACID_POLARITY.update({
+        'B': (AMINO_ACID_POLARITY['D'] + AMINO_ACID_POLARITY['N']) / 2,  # Aspartic acid or Asparagine
+        'Z': (AMINO_ACID_POLARITY['E'] + AMINO_ACID_POLARITY['Q']) / 2,  # Glutamic acid or Glutamine
+        'J': (AMINO_ACID_POLARITY['I'] + AMINO_ACID_POLARITY['L']) / 2,  # Isoleucine or Leucine
+        'X': sum(AMINO_ACID_POLARITY.values()) / len(AMINO_ACID_POLARITY)  # Any amino acid
+    })
+    
     childClasses = {}
     
     proteomeIdLookupTable = {
@@ -332,6 +346,12 @@ class Protein:
         self.weight = self.calculate_weight(self.sequence)
         self.hydrophobicity = self.calculate_hydrophobicity(self.sequence)
         self.isoelectric_point = self.calculate_isoelectric_point(self.sequence)
+        self.polarity = self.calculatepolarity(self.sequence)
+    
+    def calculatepolarity(self,sequence):
+        
+        rawSequenceWeight = sum([self.AMINO_ACID_POLARITY.get(aa,0) for aa in sequence])/len(self.sequence)
+        return round(rawSequenceWeight, ndigits=N_DIGITS_GLOBAL)
 
     def calculate_weight(self,sequence):
         """

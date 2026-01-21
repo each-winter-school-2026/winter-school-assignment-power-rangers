@@ -1,0 +1,36 @@
+{
+"PowerRangers": {
+"id": "PowerRangers",
+"title": "PowerRangers",
+"subtitle": "komalwaseem",
+"icon": "icons/modules/placeholder.svg",
+"settings": {
+
+    "Single choice field": {
+        "formtype": "ChoiceField",
+        "options": {"deplete protiens below cut off": ["deplete below"],
+                    "deplete protiens above cut off": ["deplete above"]
+                
+                    }
+                },
+
+                
+    
+
+
+    
+ "Molecular weight cut off": {
+        "formtype": "DecimalField",
+        "default": 75.0,
+        "min": 0.0,
+        "max": 300.0,
+        "step": 0.1}
+
+
+    
+
+
+
+        }
+    }
+}
