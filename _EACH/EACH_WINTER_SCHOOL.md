@@ -55,6 +55,7 @@ When the codespace was launched all dependencies should automatically have been 
 Start the EWOKS server by typing the following in the terminal:
 ```bash
 python app/manage.py runserver
+
 ```
 
 Which should result in something similar to this
