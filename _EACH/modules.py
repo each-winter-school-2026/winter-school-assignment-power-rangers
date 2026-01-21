@@ -45,6 +45,8 @@ def select(moduleIdentifier,selectedSettings,moduleData):
             # Does not perform any real processing; for demonstration only.
             proteins = exampleModule(moduleIdentifier,selectedSettings,moduleData)
             return virtualSDSPage_2DGaussian(proteins)
+        case "hilic":
+            proteins = HILIC(moduleIdentifier,selectedSettings,moduleData)
         case "Retention_factor":
             # Does not perform any real processing; for demonstration only.
             proteins = Retention_factor(moduleIdentifier,selectedSettings,moduleData)
@@ -310,4 +312,186 @@ def exampleModule(moduleIdentifier,selectedSettings,moduleData):
     
     return Protein.getAllProteins()
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# ==== HILIC option-6 surrogate predictor (multi-FASTA) — Google Colab cell ====
+# What it does:
+#  1) Installs Biopython if needed
+#  2) Uploads a multi-sequence FASTA (or uses an existing path)
+#  3) Computes option-6 features (+ optional logk_ref) for each protein
+#  4) Displays a DataFrame and writes CSV for download
+
+# --- 0) deps ---
+
+import re
+from dataclasses import dataclass
+from typing import Dict, Optional, Tuple, List
+
+import pandas as pd
+from Bio import SeqIO
+from Bio.SeqUtils.ProtParam import ProteinAnalysis
+
+# --- 1) model/descriptor definitions ---
+POLAR_WEIGHTS: Dict[str, float] = {
+    "S": 1.0, "T": 1.0, "N": 1.0, "Q": 1.0,
+    "Y": 0.7, "W": 0.7,
+    "C": 0.6,
+    "H": 0.5,
+}
+
+PKA = {
+    "Cterm": 3.1,
+    "Nterm": 8.0,
+    "C": 8.5,
+    "D": 3.9,
+    "E": 4.1,
+    "H": 6.5,
+    "K": 10.8,
+    "R": 12.5,
+    "Y": 10.1,
+}
+
+@dataclass
+class Option6Features:
+    length: int
+    polar_frac_weighted: float
+    gravy: float
+    net_charge: float
+    abs_charge: float
+    nglyco_motifs: int
+    glyco_proxy: float
+    logk_ref: Optional[float] = None
+
+# --- 2) feature calculators ---
+def clean_protein_sequence(seq: str) -> str:
+    """Uppercase and keep only letters A–Z; remove gaps/whitespace/stop codons/etc."""
+    s = str(seq).upper()
+    s = re.sub(r"[^A-Z]", "", s)
+    return s
+
+def weighted_polar_fraction(seq: str, weights: Dict[str, float] = POLAR_WEIGHTS) -> float:
+    L = len(seq)
+    if L == 0:
+        return float("nan")
+    return sum(weights.get(aa, 0.0) for aa in seq) / L
+
+def count_nglyco_motifs(seq: str) -> int:
+    """N-glyco motif: N-X-[S/T] where X != P."""
+    pattern = re.compile(r"N[^P][ST]")
+    return len(pattern.findall(seq))
+
+def net_charge_hh(seq: str, ph: float, pka: Dict[str, float] = PKA) -> float:
+    """
+    Henderson–Hasselbalch net charge:
+      + N-term, K, R, H
+      - C-term, D, E, C, Y
+    """
+    counts = {aa: seq.count(aa) for aa in "CDEHKRY"}
+    nterm = 1
+    cterm = 1
+
+    pos = 0.0
+    pos += nterm * (1.0 / (1.0 + 10 ** (ph - pka["Nterm"])))
+    pos += counts["K"] * (1.0 / (1.0 + 10 ** (ph - pka["K"])))
+    pos += counts["R"] * (1.0 / (1.0 + 10 ** (ph - pka["R"])))
+    pos += counts["H"] * (1.0 / (1.0 + 10 ** (ph - pka["H"])))
+
+    neg = 0.0
+    neg += cterm * (1.0 / (1.0 + 10 ** (pka["Cterm"] - ph)))
+    neg += counts["D"] * (1.0 / (1.0 + 10 ** (pka["D"] - ph)))
+    neg += counts["E"] * (1.0 / (1.0 + 10 ** (pka["E"] - ph)))
+    neg += counts["C"] * (1.0 / (1.0 + 10 ** (pka["C"] - ph)))
+    neg += counts["Y"] * (1.0 / (1.0 + 10 ** (pka["Y"] - ph)))
+
+    return pos - neg
+
+def compute_option6_features(
+    record,
+    ph: float,
+    betas: Optional[Tuple[float, float, float, float, float]] = None,
+    glyco_mode: str = "binary",
+) -> Option6Features:
+    seq = clean_protein_sequence(str(record))
+    L = len(seq)
+
+    polar_w = weighted_polar_fraction(seq)
+    gravy = ProteinAnalysis(seq).gravy() if L > 0 else float("nan")
+    z = net_charge_hh(seq, ph=ph)
+    absz = abs(z)
+
+    ng = count_nglyco_motifs(seq)
+    if glyco_mode == "binary":
+        G = 1.0 if ng > 0 else 0.0
+    elif glyco_mode == "density":
+        G = (ng / L) if L > 0 else float("nan")
+    else:
+        raise ValueError("glyco_mode must be 'binary' or 'density'")
+
+    logk_ref = None
+    if betas is not None:
+        b0, b1, b2, b3, b4 = betas
+        # model: logk = b0 + b1*polar + b2*(-GRAVY) + b3*|Z| + b4*G
+        logk_ref = b0 + b1 * polar_w + b2 * (-gravy) + b3 * absz + b4 * G
+
+    return Option6Features(
+        length=L,
+        polar_frac_weighted=polar_w,
+        gravy=gravy,
+        net_charge=z,
+        abs_charge=absz,
+        nglyco_motifs=ng,
+        glyco_proxy=G,
+        logk_ref=logk_ref,
+    )
+
+
+def HILIC(moduleIdentifier, selectedSettings, moduleData):
+    # --- 4) PARAMETERS (edit as needed) ---
+    PH = extractSetting("PH", moduleIdentifier, selectedSettings, moduleData)
+    GLYCO_MODE = extractSetting("GLYCO_MODE", moduleIdentifier, selectedSettings, moduleData)
+    BETA_1 = extractSetting("BETA_1", moduleIdentifier, selectedSettings, moduleData)
+    BETA_2 = extractSetting("BETA_2", moduleIdentifier, selectedSettings, moduleData)
+    BETA_3 = extractSetting("BETA_3", moduleIdentifier, selectedSettings, moduleData)
+    BETA_4 = extractSetting("BETA_4", moduleIdentifier, selectedSettings, moduleData)
+    BETA_5 = extractSetting("BETA_5", moduleIdentifier, selectedSettings, moduleData)
+    BETAS = (BETA_1, BETA_2, BETA_3, BETA_4, BETA_5)
+
+    # --- 5) RUN: iterate multi-FASTA and collect predictions ---
+    rows: List[dict] = []
+    for p in Protein.getAllProteins():
+        sequence = p.get_sequence()
+        feat = compute_option6_features(sequence, ph=PH, betas=BETAS, glyco_mode=GLYCO_MODE)
+        rows.append({
+            "length": feat.length,
+            "polar_frac_w": feat.polar_frac_weighted,
+            "gravy": feat.gravy,
+            "net_charge": feat.net_charge,
+            "abs_charge": feat.abs_charge,
+            "nglyco_motifs": feat.nglyco_motifs,
+            "glyco_proxy": feat.glyco_proxy,
+            "logk_ref": feat.logk_ref,
+        })
+
+    df = pd.DataFrame(rows)
+
+    # --- 6) DISPLAY + SAVE ---
+    df  # shows a table in Colab
+
+    out_csv = "hilic_option6_predictions.csv"
+    df.to_csv(out_csv, index=False)
+    print(f"Wrote: {out_csv}  (rows={len(df)})")
+    
+    return Protein.getAllProteins()
 

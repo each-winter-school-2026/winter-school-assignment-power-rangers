@@ -1,0 +1,76 @@
+{
+"hilic": {
+"id": "hilic",
+"title": "HILIC",
+"subtitle": "Hydrophilic Interaction Liquid Chromatography",
+"icon": "icons/modules/placeholder.svg",
+"settings": {
+
+    "PH": {
+        "formtype": "DecimalField",
+        "default": 3.0,
+        "min": 0.0,
+        "max": 14.0,
+        "step": 0.1
+    },
+
+    
+    "GLYCO_MODE": {
+        "formtype": "ChoiceField",
+        "options": {
+            "Binary": "binary",
+            "Density": "density"
+        },
+        "default": "Binary"
+    },
+
+    
+    "BETA_1": {
+        "formtype": "DecimalField",
+        "default": 0.0,
+        "min": -10.0,
+        "max": 10.0,
+        "step": 0.1
+    },
+
+    
+    "BETA_2": {
+        "formtype": "DecimalField",
+        "default": 4.0,
+        "min": -10.0,
+        "max": 10.0,
+        "step": 0.1
+    },
+
+    
+    "BETA_3": {
+        "formtype": "DecimalField",
+        "default": 1.2,
+        "min": -10.0,
+        "max": 10.0,
+        "step": 0.1
+    },
+
+    
+    "BETA_4": {
+        "formtype": "DecimalField",
+        "default": 0.6,
+        "min": -10.0,
+        "max": 10.0,
+        "step": 0.1
+    },
+
+    
+    "BETA_5": {
+        "formtype": "DecimalField",
+        "default": 2.5,
+        "min": -10.0,
+        "max": 10.0,
+        "step": 0.1
+    }
+
+
+
+        }
+    }
+}
