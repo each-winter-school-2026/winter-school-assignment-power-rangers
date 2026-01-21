@@ -70,6 +70,12 @@ def powerRangers(moduleIdentifier,selectedSettings,moduleData):
                                 selectedSettings=selectedSettings,
                                 moduleData=moduleData)
     
+    for protein in Protein.getAllProteins():
+        if protein.weight < chosenCutoff:
+            protein.set_abundance(0.0)  # Set this proteins abundance to 0 preventing it from being visualized.
+    
+    return Protein.getAllProteins()
+    
     print(chosenCutoff,depleteAboveOrBelow)
     
     return Protein.getAllProteins()
