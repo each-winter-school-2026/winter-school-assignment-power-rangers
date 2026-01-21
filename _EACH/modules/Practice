@@ -1,7 +1,7 @@
 {
-"example_module": {
-"id": "example_module",
-"title": "Example Module",
+"practice example": {
+"id": "practice example",
+"title": "practice example",
 "subtitle": "An example module for demonstration purposes",
 "icon": "icons/modules/placeholder.svg",
 "settings": {
