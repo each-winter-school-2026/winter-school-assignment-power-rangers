@@ -49,7 +49,13 @@ class Protein:
         "A": 0, "G": 0, "P": 0, "C": 0.55, "V": 0, "I": 0, "L": 0,
         "F": 0, "Y": 0.65, "W": 0.65, "H": 0.7, "M": 0
     }
-    
+    # Ambiguous codes (average polarity)
+    AMINO_ACID_POLARITY.update({
+        'B': (AMINO_ACID_POLARITY['D'] + AMINO_ACID_POLARITY['N']) / 2,  # Aspartic acid or Asparagine
+        'Z': (AMINO_ACID_POLARITY['E'] + AMINO_ACID_POLARITY['Q']) / 2,  # Glutamic acid or Glutamine
+        'J': (AMINO_ACID_POLARITY['I'] + AMINO_ACID_POLARITY['L']) / 2,  # Isoleucine or Leucine
+        'X': sum(AMINO_ACID_POLARITY.values()) / len(AMINO_ACID_POLARITY)  # Any amino acid
+    })
     childClasses = {}
     
     proteomeIdLookupTable = {
