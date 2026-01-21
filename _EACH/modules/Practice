@@ -1,0 +1,53 @@
+{
+"example_module": {
+"id": "example_module",
+"title": "Example Module",
+"subtitle": "An example module for demonstration purposes",
+"icon": "icons/modules/placeholder.svg",
+"settings": {
+
+    "Single choice field": {
+        "formtype": "ChoiceField",
+        "options": {"Option 1": ["Internal_code_for_option_1"],
+                    "Option 2": ["Internal_code_for_option_2"],
+                    "Option 3":["Internal_code_for_option_3"]
+                    }
+                },
+
+    
+    "Multiple choice field": {
+        "formtype": "MultipleChoiceField",
+        "options": {"Option 1": ["Internal_code_for_option_1"],
+                    "Option 2": ["Internal_code_for_option_2"],
+                    "Option 3": ["Internal_code_for_option_3"]
+                    },
+        "default": ["Option 1","Option 2"]
+                },
+
+    
+    "Decimal field": {
+        "formtype": "DecimalField",
+        "default": 99.0,
+        "min": 0.0,
+        "max": 100.0,
+        "step": 0.1},
+
+
+    "Boolean field": {
+        "formtype": "BooleanField",
+        "default": false
+            },
+
+            
+    "Character field": {
+        "formtype": "CharField",
+        "default": "Here the user can type anything they want",
+        "min_length": 5,  
+        "max_length": 100
+            }
+
+
+
+        }
+    }
+}
