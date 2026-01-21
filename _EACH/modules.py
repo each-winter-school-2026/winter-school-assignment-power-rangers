@@ -45,9 +45,9 @@ def select(moduleIdentifier,selectedSettings,moduleData):
             # Does not perform any real processing; for demonstration only.
             proteins = exampleModule(moduleIdentifier,selectedSettings,moduleData)
             return virtualSDSPage_2DGaussian(proteins)
-        case "ola":
+        case "Retention_factor":
             # Does not perform any real processing; for demonstration only.
-            proteins = ola(moduleIdentifier,selectedSettings,moduleData)
+            proteins = Retention_factor(moduleIdentifier,selectedSettings,moduleData)
             return virtualSDSPage_2DGaussian(proteins)
         case "PowerRangers":
             # Does not perform any real processing; for demonstration only.
@@ -56,7 +56,11 @@ def select(moduleIdentifier,selectedSettings,moduleData):
         case _: # Add new modules above 
             # Do not add modules below
             raise NotImplementedError(f"Module: {moduleIdentifier} is not implemented yet.")
-        
+
+def Retention_factor(moduleIdentifier,selectedSettings,moduleData):
+    #We apply the equation parameters
+
+    Polaritypartition =        
 def powerRangers(moduleIdentifier,selectedSettings,moduleData):
     # Get the cutoff value (0-300 kDa)
     chosenCutoff = extractSetting(settingName="Molecular weight cut off",
