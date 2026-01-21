@@ -1,9 +1,9 @@
 {
-"example_module": {
-"id": "example_module",
-"title": "Example Module",
-"subtitle": "An example module for demonstration purposes",
-"icon": "icons/modules/placeholder.svg",
+"retention_factor": {
+"id": "retention_factor",
+"title": "Retention Factor",
+"subtitle": "Prediction of elution order of proteins from HILIC columns",
+"icon": "icons/modules/centrifuge.svg",
 "settings": {
 
     "Single choice field": {
