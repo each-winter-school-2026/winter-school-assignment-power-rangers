@@ -237,6 +237,16 @@ def SDS_page_fractionation(moduleIdentifier, selectedSettings,moduleData):
     return Protein.getAllProteins()
     
 def ola(moduleIdentifier,selectedSettings,moduleData):
+    chosenCutoff = extractSetting(settingName="MW cutoff no.",
+                                  moduleIdentifier=moduleIdentifier,
+                                  selectedSettings=selectedSettings,
+                                  moduleData=moduleData)
+    
+    # Get the user's choice: deplete above or below?
+    depleteAboveOrBelow = extractSetting(settingName="MW cutoff deplete: ",
+                                moduleIdentifier=moduleIdentifier,
+                                selectedSettings=selectedSettings,
+                                moduleData=moduleData)
     return Protein.getAllProteins()
 
 def PowerRangers(moduleIdentifier,selectedSettings,moduleData):
