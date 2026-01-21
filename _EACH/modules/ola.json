@@ -6,7 +6,7 @@
 "icon": "icons/modules/centrifuge.svg",
 "settings": {
 
-    "Single choice field": {
+    "MW cutoff": {
         "formtype": "ChoiceField",
         "options": {"Option 1": ["Internal_code_for_option_1"],
                     "Option 2": ["Internal_code_for_option_2"],
@@ -17,7 +17,7 @@
 
 
     
-    "Decimal field": {
+    "MW cutoff no.": {
         "formtype": "DecimalField",
         "default": 99.0,
         "min": 0.0,
