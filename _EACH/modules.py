@@ -51,13 +51,13 @@ def select(moduleIdentifier,selectedSettings,moduleData):
             return virtualSDSPage_2DGaussian(proteins)
         case "PowerRangers":
             # Does not perform any real processing; for demonstration only.
-            proteins = PowerRangers(moduleIdentifier,selectedSettings,moduleData)
+            proteins = powerRangers(moduleIdentifier,selectedSettings,moduleData)
             return virtualSDSPage_2DGaussian(proteins)
         case _: # Add new modules above 
             # Do not add modules below
             raise NotImplementedError(f"Module: {moduleIdentifier} is not implemented yet.")
         
-def testModule(moduleIdentifier,selectedSettings,moduleData):
+def powerRangers(moduleIdentifier,selectedSettings,moduleData):
     # Get the cutoff value (0-300 kDa)
     chosenCutoff = extractSetting(settingName="Molecular weight cut off",
                                   moduleIdentifier=moduleIdentifier,
@@ -69,6 +69,8 @@ def testModule(moduleIdentifier,selectedSettings,moduleData):
                                 moduleIdentifier=moduleIdentifier,
                                 selectedSettings=selectedSettings,
                                 moduleData=moduleData)
+    
+    print(chosenCutoff,depleteAboveOrBelow)
     
     return Protein.getAllProteins()
 def fasta_input(moduleIdentifier, selectedSettings,moduleData):
@@ -249,8 +251,6 @@ def ola(moduleIdentifier,selectedSettings,moduleData):
                                 moduleData=moduleData)
     return Protein.getAllProteins()
 
-def PowerRangers(moduleIdentifier,selectedSettings,moduleData):
-    return Protein.getAllProteins()
 
 def newModule(moduleIdentifier,selectedSettings,moduleData):
     # The first step is to access the settings chosen by the user. 
