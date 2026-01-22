@@ -1,6 +1,15 @@
 Describe your module in 100 words below:
+Hydrophilic Interaction Liquid Chromatography (HILIC) is a mode of 
+liquid chromatography used for the separation of highly polar compounds. 
+It employs a polar stationary phase, such as silica or amide, and a mobile 
+phase rich in organic solvent, typically acetonitrile, with a small amount 
+of water. A water-enriched layer forms on the stationary phase, allowing 
+polar analytes to be retained mainly by partitioning, along with hydrogen 
+bonding and electrostatic interactions. HILIC provides good retention and 
+peak shape for compounds poorly retained in reversed-phase chromatography 
+and is especially suitable for LC–MS applications.
 
-Name of module:
+Name of module: HILIC
 
 # ==== HILIC option-6 surrogate predictor (multi-FASTA) — Google Colab cell ====
 # What it does:
